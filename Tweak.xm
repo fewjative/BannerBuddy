@@ -33,6 +33,60 @@ static BOOL justPulled = NO;
 
 %end
 
+%hook SBBannerContainerView
+
+-(void)layoutSubviews{
+	%orig;
+	NSLog(@"Container subView: %@", self);
+
+	if([[%c(SBReachabilityManager) sharedInstance] reachabilityModeActive] && enabled)
+	{
+		NSLog(@"shift from subview");
+		CGFloat newY = [[UIScreen mainScreen] bounds].size.height * yOffset;
+		CGRect newRect = CGRectMake(self.frame.origin.x,newY,self.frame.size.width,self.frame.size.height);
+		[self setFrame:newRect];
+	}
+}
+
+%end
+
+%hook SBReachabilitySettings
+
+-(CGFloat)yOffsetFactor{
+	CGFloat orig = %orig;
+	yOffset = orig;
+	
+	SBBannerController * controller = [%c(SBBannerController) sharedInstance];
+
+	if([controller isShowingBanner] && enabled)
+	{
+		NSLog(@"ReachActive and banner showing.");
+		SBBannerContainerViewController * vc = MSHookIvar<SBBannerContainerViewController*>(controller,"_bannerViewController");
+		NSLog(@"vc: %@", vc);
+		SBBannerContainerView * cv = MSHookIvar<SBBannerContainerView*>(vc,"_containerView");
+		NSLog(@"cv: %@", cv);
+		CGFloat newY = [[UIScreen mainScreen] bounds].size.height * yOffset;
+		CGRect testRect = CGRectMake(cv.frame.origin.x,newY,cv.frame.size.width,cv.frame.size.height);
+		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+			cv.frame = testRect;
+		}
+		completion:^(BOOL finished){
+
+		}];
+		//[cv setFrame:testRect];
+		NSLog(@"cv: %@", cv);
+	}
+	else
+	{
+		NSLog(@"Banner not showing");
+	}
+
+	return orig;
+}
+
+%end
+
+/*
 %hook SBBannerContainerViewController
 
 //alternative possibility: SBBannerController, check isShowingBanner using sharedInstance, then grab appropriate views.
@@ -179,6 +233,8 @@ static BOOL justPulled = NO;
 }
 
 %end
+
+*/
 
 static void loadPrefs() 
 {
