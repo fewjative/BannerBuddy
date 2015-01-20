@@ -1,0 +1,10 @@
+{
+    entry = {
+	bundle = BannerBuddySettings;
+	cell = PSLinkCell;
+	detail = BannerBuddySettingsListController;
+	icon = BannerBuddySettings.png;
+	isController = 1;
+	label = BannerBuddy;
+    };
+}

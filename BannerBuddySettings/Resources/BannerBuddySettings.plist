@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>BannerBuddy</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.joshdoctors.bannerbuddy/settingschanged</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.joshdoctors.bannerbuddy</string>
+			<key>key</key>
+			<string>enabled</string>
+			<key>label</key>
+			<string>Enable Tweak</string>
+		</dict>
+		<!-- <dict>
+			<key>PostNotification</key>
+			<string>com.joshdoctors.reachthebanners/settingschanged</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.joshdoctors.reachthebanners</string>
+			<key>key</key>
+			<string>blurView</string>
+			<key>label</key>
+			<string>Blur view above the banner?</string>
+		</dict> -->
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerAlignment</key>
+			<integer>1</integer>
+			<key>footerText</key>
+			<string>By default, banners will stay in the extended position, even after Reachability has closed. Turning this toggle off means the banners will readjust back to the top of the screen when Reachability is closed.</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.joshdoctors.bannerbuddy/settingschanged</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.joshdoctors.bannerbuddy</string>
+			<key>key</key>
+			<string>stayPut</string>
+			<key>label</key>
+			<string>Have banners stay in place?</string>
+		</dict>
+		<dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>id</key>
+			<string>showTestBannerButton</string>
+            <key>action</key>
+            <string>showTestBanner</string>
+            <key>label</key>
+            <string>Test Banner</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>About</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<string>twitter</string>
+			<key>alignment</key>
+			<string>center</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>@Fewjative</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Options</string>
+</dict>
+</plist>
