@@ -24,23 +24,95 @@ static BOOL enabled = NO;
 static BOOL stayPut = YES;
 static SBReachabilitySettings * sett = nil;
 
-%hook SBWorkspace
+// for iOS9
+%hook SBMainWorkspace
 
 -(void)handleReachabilityModeActivated {
 	%orig;
-	NSLog(@"[BannerBuddy]Activating reachability.");
+	NSLog(@"[BannerBuddy]Activating reachability, shifting banners down.");
 	[self shiftBannersDown];
 }
 
 -(void)handleReachabilityModeDeactivated {
 	%orig;
-	NSLog(@"[BannerBuddy]Deactivating reachability.");
+	NSLog(@"[BannerBuddy]Deactivating reachability, shifting banners up.");
 	[self shiftBannersUp];
 }
 
 -(void)handleCancelReachabilityRecognizer:(id)arg{
 	%orig;
-	NSLog(@"[BannerBuddy]Deactivating reachability via tap");
+	NSLog(@"[BannerBuddy]Deactivating reachability via tap, shifting banners up.");
+	[self shiftBannersUp];
+}
+
+%new - (void)shiftBannersUp{
+
+	SBBannerController * controller = [%c(SBBannerController) sharedInstance];
+
+	if([controller isShowingBanner] && enabled && !stayPut)
+	{
+		NSLog(@"[BannerBuddy]Reachability is deactivating, banner is showing, tweak enabled, and user wants dynamic banners.");
+		SBBannerContainerViewController * vc = MSHookIvar<SBBannerContainerViewController*>(controller,"_bannerViewController");
+		SBBannerContainerView * cv = MSHookIvar<SBBannerContainerView*>(vc,"_containerView");
+
+		CGRect dynamicRect = CGRectMake(cv.frame.origin.x,0,cv.frame.size.width,cv.frame.size.height);
+
+		[%c(BSUIAnimationFactory) animateWithFactory:[sett animationFactory] actions:^{
+			cv.frame = dynamicRect;
+		} completion:^(BOOL finished){
+		}];
+	}
+	else
+	{
+		NSLog(@"[BannerBuddy]Not raising->enabled: %ld, stayPut: %ld, isShowing: %ld",(long)enabled, (long)stayPut, (long)[controller isShowingBanner]);
+	}
+}
+
+%new - (void)shiftBannersDown{
+
+    SBBannerController * controller = [%c(SBBannerController) sharedInstance];
+
+	if([controller isShowingBanner] && enabled)
+	{
+		NSLog(@"[BannerBuddy]Reachability is active, tweak is enabled, and banner is showing.");
+		SBBannerContainerViewController * vc = MSHookIvar<SBBannerContainerViewController*>(controller,"_bannerViewController");
+		SBBannerContainerView * cv = MSHookIvar<SBBannerContainerView*>(vc,"_containerView");
+
+		CGFloat newY = [[UIScreen mainScreen] bounds].size.height * [sett yOffsetFactor];
+		CGRect dynamicRect = CGRectMake(cv.frame.origin.x,newY,cv.frame.size.width,cv.frame.size.height);
+
+		NSLog(@"STUFF: %@ %@ %@", NSStringFromCGRect(dynamicRect), vc, cv);
+
+		[%c(BSUIAnimationFactory) animateWithFactory:[sett animationFactory] actions:^{
+			cv.frame = dynamicRect;
+		} completion:^(BOOL finished){
+		}];
+	}
+	else
+	{
+		NSLog(@"[BannerBuddy]Not lowering ->enabled: %ld, stayPut: %ld, isShowing: %ld",(long)enabled, (long)stayPut, (long)[controller isShowingBanner]);
+	}
+}
+
+%end
+
+%hook SBWorkspace
+
+-(void)handleReachabilityModeActivated {
+	%orig;
+	NSLog(@"[BannerBuddy]Activating reachability, shifting banners down.");
+	[self shiftBannersDown];
+}
+
+-(void)handleReachabilityModeDeactivated {
+	%orig;
+	NSLog(@"[BannerBuddy]Deactivating reachability, shifting banners up.");
+	[self shiftBannersUp];
+}
+
+-(void)handleCancelReachabilityRecognizer:(id)arg{
+	%orig;
+	NSLog(@"[BannerBuddy]Deactivating reachability via tap, shifting banners up.");
 	[self shiftBannersUp];
 }
 
@@ -116,7 +188,10 @@ static SBReachabilitySettings * sett = nil;
 	%orig;
 
 	if(!sett)
+	{
 		sett = [%c(SBReachabilitySettings) new];
+		NSLog(@"[BannerBuddy]Initialized the default reachability settings: %@", sett);
+	}
 }
 
 %end

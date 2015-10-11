@@ -6,6 +6,7 @@ BannerBuddy_FILES = Tweak.xm
 BannerBuddy_FRAMEWORKS = UIKit CoreGraphics Foundation QuartzCore Accelerate
 BannerBuddy_PRIVATE_FRAMEWORKS = SpringBoardFoundation
 BannerBuddy_CFLAGS = -Wno-error
+BannerBuddy_LDFLAGS += -Wl,-segalign,4000
 export GO_EASY_ON_ME := 1
 include $(THEOS_MAKE_PATH)/tweak.mk
 
